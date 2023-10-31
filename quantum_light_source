@@ -19424,20 +19424,6 @@ SNAME Waveguide$3
 XY 0: 0
 ENDEL 
 
-TEXT 
-LAYER 10 
-TEXTTYPE 0 
-STRANS 0 
-MAG 0.1 
-XY 196690: 0
-STRING SiEPIC-Tools verification: 3 errors
-2023-11-01 02:24:03
-SiEPIC-Tools v0.4.0
-technology: EBeam
-linux
-Python: 3.11.5 (main, Sep  2 2023, 14:16:33) [GCC 13.2.1 20230801], /usr/lib/python311.zip
-KLayout 0.28.12
-ENDEL 
 
 TEXT 
 LAYER 10 
