@@ -54,17 +54,59 @@ fdtd.set("y", 0)
 fdtd.set("x span", 0.5e-6)  # Change 'y span' to 'x span'
 fdtd.set("override global monitor settings", 1)
 fdtd.set("use wavelength spacing", 1)
-#fdtd.set("number of points", 1000)
+
+# Add a field profile monitor
+fdtd.addprofile()
+fdtd.set("name", "E_monitor")
+fdtd.set("x", 0.5e-6)
+fdtd.set("y", 0)
+fdtd.set("x span", 0.5e-6)  # Change 'y span' to 'x span'
+fdtd.set("override global monitor settings", 1)
+fdtd.set("use wavelength spacing", 1)
 
 # Run the simulation
 fdtd.run()
 
 # Get the field profile
-x = fdtd.getdata("monitor", "x")
-y = fdtd.getdata("monitor", "y")
-z = fdtd.getdata("monitor", "z")
-E = fdtd.getdata("monitor", "E")
+#print(fdtd.getdata("E_monitor"))
+x = fdtd.getdata("E_monitor", "x")
+y = fdtd.getdata("E_monitor", "y")
+z = fdtd.getdata("E_monitor", "z")
+Ex = fdtd.getdata("E_monitor", "Ex")
+Ey = fdtd.getdata("E_monitor", "Ey")
+Ez = fdtd.getdata("E_monitor", "Ez")
+
+print(f"x.shape = {x.shape}")
+print(f"y.shape = {y.shape}")
+
+# Get the frequency data
+f = fdtd.getdata("E_monitor", "f")
+
+# Find the index of the center frequency
+idx = np.abs(f - freq_center).argmin()
+
+# Select the electric field components at the center frequency and the specific z-index
+Ex0 = Ex[:, :, 0, idx]
+Ey0 = Ey[:, :, 0, idx]
+
+print(f"Ex.shape = {Ex.shape}")
+print(f"Ex0.shape = {Ex0.shape}")
+
+# Compute the magnitude of the electric field
+E = np.sqrt(np.abs(Ex0)**2 + np.abs(Ey0)**2)
+
+# The x, y, and E arrays should be 2D arrays with shapes (19, 73) for plotting
+x, y = np.meshgrid(x.ravel(), y.ravel())
+E = E.reshape(x.shape)
+
+# Check the shapes
+print(f"x.shape = {x.shape}")  # Should print (19, 73)
+print(f"y.shape = {y.shape}")  # Should print (19, 73)
+print(f"E.shape = {E.shape}")  # Should print (19, 73)
 
 # Plot the field profile
-plt.pcolormesh(x, y, np.abs(E))
+plt.pcolormesh(x, y, E, shading='auto')
+plt.colorbar(label="Electric field (a.u.)")
+plt.xlabel("x position (m)")
+plt.ylabel("y position (m)")
 plt.show()
